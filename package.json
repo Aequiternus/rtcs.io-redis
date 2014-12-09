@@ -1,0 +1,18 @@
+{
+  "name": "rtcs.io-redis",
+  "description": "Redis storage for RTCS.IO. Work in progress. Deep alpha version :)",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": {
+    "name": "Maksim Krylosov",
+    "email": "aequiternus@gmail.com"
+  },
+  "dependencies": {
+    "base64id": "*",
+    "redis": "*",
+    "rtcs.io-storage": "*"
+  },
+  "optionalDependencies": {
+    "hiredis": "*"
+  }
+}
