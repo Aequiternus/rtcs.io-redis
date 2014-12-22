@@ -1,6 +1,7 @@
 
 module.exports = RedisTemp;
 
+var util = require("util");
 var Temp = require('rtcs.io-storage').Temp;
 var redis = require('redis');
 var base64id = require('base64id');
@@ -50,7 +51,7 @@ function RedisTemp(options) {
     });
 }
 
-RedisTemp.prototype.__proto__ = Temp;
+util.inherits(RedisTemp, Temp);
 
 RedisTemp.prototype.addSocket = function(socketId, userId, callback) {
     this.redis.sadd(this.options.prefixUserSockets + userId, socketId, callback);

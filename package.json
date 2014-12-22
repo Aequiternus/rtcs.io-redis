@@ -1,7 +1,7 @@
 {
   "name": "rtcs.io-redis",
   "description": "Redis storage for RTCS.IO. Work in progress. Deep alpha version :)",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": {
     "name": "Maksim Krylosov",

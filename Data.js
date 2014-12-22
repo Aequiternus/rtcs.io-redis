@@ -1,6 +1,7 @@
 
 module.exports = RedisData;
 
+var util = require("util");
 var Data = require('rtcs.io-storage').Data;
 var redis = require('redis');
 var base64id = require('base64id');
@@ -50,7 +51,7 @@ function RedisData(options) {
     });
 }
 
-RedisData.prototype.__proto__ = Data;
+util.inherits(RedisData, Data);
 
 RedisData.prototype.close = function() {
     if (this.redis.connected) {
@@ -73,7 +74,11 @@ RedisData.prototype.setUser = function(userId, data, callback) {
 };
 
 RedisData.prototype.getUsers = function(userIds, callback) {
-    this.redis.mget(userIds, function(err, res) {
+    var prefixedUserIds = [];
+    userIds.forEach(function(userId) {
+        prefixedUserIds.push(this.options.prefixUser + userId);
+    }, this);
+    this.redis.mget(prefixedUserIds, function(err, res) {
         if (err) {
             callback(err);
         } else {
@@ -174,29 +179,11 @@ RedisData.prototype.getLog = function(roomId, time, callback) {
         } else {
             var msglog = [];
             for (var i = 0, l = reply.length; i < l; i++) {
-                if (time && reply[i].time > time) {
+                if (!time || reply[i].time > time) {
                     msglog.push(JSON.parse(reply[i]));
                 }
             }
             callback(null, msglog);
         }
     });
-};
-
-Data.prototype.canJoin = function(socket, msg, callback) {
-
-    process.nextTick(callback.bind(null, null));
-};
-
-Data.prototype.canChat = function(socket, msg, callback) {
-    if (msg.message) {
-        var message = msg.message.trim();
-        if (message) {
-            this.canJoin(socket, msg, callback);
-        }
-    }
-};
-
-Data.prototype.canPeer = function(socket, msg, callback) {
-    process.nextTick(callback.bind(null, null));
 };
