@@ -63,6 +63,14 @@ RedisData.prototype.getSession = function(sessionId, callback) {
     this.redis.get(this.options.prefixSession + sessionId, callback);
 };
 
+RedisData.prototype.setSession = function(sessionId, userId, callback) {
+    this.redis.set(this.options.prefixSession + sessionId, userId, callback);
+};
+
+RedisData.prototype.removeSession = function(sessionId, callback) {
+    this.redis.del(this.options.prefixSession + sessionId, callback);
+};
+
 RedisData.prototype.getUser = function(userId, callback) {
     this.redis.get(this.options.prefixUser + userId, function(err, reply) {
         callback(err, err ? null : JSON.parse(reply));
@@ -71,6 +79,10 @@ RedisData.prototype.getUser = function(userId, callback) {
 
 RedisData.prototype.setUser = function(userId, data, callback) {
     this.redis.set(this.options.prefixUser + userId, JSON.stringify(data), callback);
+};
+
+RedisData.prototype.removeUser = function(userId, callback) {
+    this.redis.del(this.options.prefixUser + userId, callback);
 };
 
 RedisData.prototype.getUsers = function(userIds, callback) {
@@ -146,6 +158,21 @@ RedisData.prototype.getRoom = function(roomId, callback) {
 
 RedisData.prototype.setRoom = function(roomId, data, callback) {
     this.redis.set(this.options.prefixRoom + roomId, JSON.stringify(data), callback);
+};
+
+RedisData.prototype.removeRoom = function(roomId, callback) {
+    var pending = 2;
+
+    this.redis.del(this.options.prefixRoom + roomId, done);
+    this.redis.del(this.options.prefixLog + roomId, done);
+
+    function done(err) {
+        if (err) {
+            callback(err);
+        } else if (!--pending) {
+            callback();
+        }
+    }
 };
 
 RedisData.prototype.addLog = function(roomId, msg, callback) {
